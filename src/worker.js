@@ -49,7 +49,7 @@ async function fetchComunidadMadridFinancialAid() {
 		const openApplications = [];
 		// Based on the provided HTML sample
 		const itemRegex =
-			/<li><div class="views-field views-field-nothing-1 data-content"><span class="field-content"><div id="[^"]*" class="content">(.*?)<\/div><\/span><\/div><\/li>/gs;
+			/<li>\n?\s*<div class="views-field views-field-nothing-1 data-content">\n?\s*<span class="field-content">\n?\s*<div id="[^"]*" class="content">(.*?)<\/div>\n?\s*<\/span>\n?\s*<\/div>\n?\s*<\/li>/gs;
 
 		let match;
 		while ((match = itemRegex.exec(htmlText)) !== null) {
@@ -63,8 +63,11 @@ async function fetchComunidadMadridFinancialAid() {
 			const title = titleMatch[2].trim();
 
 			// Extract deadline
-			const deadlineMatch = /<div class="fin">Fin: <time datetime="[^"]+" class="datetime">(\d{2}\/\d{2}\/\d{4})<\/time>/.exec(itemContent);
-			const deadline = deadlineMatch ? `Hasta: ${deadlineMatch[1]}` : null;
+			const deadlineMatch =
+				/<div class="fechas">\n?\s*Inicio: (\d{2}\/\d{2}\/\d{4})\n?\s*<div class="fin">Fin: <time datetime="[^"]+" class="datetime">(\d{2}\/\d{2}\/\d{4})<\/time>/.exec(
+					itemContent
+				);
+			const deadline = deadlineMatch ? `${deadlineMatch[1]} - ${deadlineMatch[2]}` : null;
 
 			openApplications.push({ source: 'Comunidad de Madrid', title, url, deadline });
 		}
@@ -157,8 +160,9 @@ async function checkFinancialAid(env) {
 		{ name: 'Notificaciones', email: 'notifications@esn.tablerus.es' },
 		[
 			{ name: 'Héctor Tablero Díaz', email: 'hector.tablero@esnuam.org' },
-			// { name: 'Secretaría', email: 'secretary@esnuam.org' },
-			// { name: 'Tesorería', email: 'tesoreria@esnuam.org' },
+			{ name: 'Secretaría', email: 'secretary@esnuam.org' },
+			{ name: 'Tesorería', email: 'tesoreria@esnuam.org' },
+			{ name: 'Webmaster', email: 'web.master@esnuam.org' },
 		],
 		null,
 		`Hay ${newAid.length} nueva${plural} beca${plural}`,
@@ -177,7 +181,7 @@ export default {
 		}
 	},
 	// Uncomment for testing
-	async fetch(request, env, ctx) {
-		return new Response(await checkFinancialAid(env), { headers: { 'Content-Type': 'text/html' } });
-	},
+	// async fetch(request, env, ctx) {
+	// 	return new Response(await checkFinancialAid(env), { headers: { 'Content-Type': 'text/html' } });
+	// },
 };
