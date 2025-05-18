@@ -177,7 +177,7 @@ export default {
 		}
 	},
 	// Uncomment for testing
-	// async fetch(request, env, ctx) {
-	//   return new Response(await checkFinancialAid(env), { headers: { "Content-Type": "text/html" } });
-	// }
+	async fetch(request, env, ctx) {
+		return new Response(await checkFinancialAid(env), { headers: { 'Content-Type': 'text/html' } });
+	},
 };
